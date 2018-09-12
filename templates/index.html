@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>评测Demo</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/xlsx.full.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/FileSaver.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/custom.js') }}"></script>
+</head>
+
+<body>
+    <div class="col-12 col-md-3 col-xl-2 bd-sidebar">
+        <form class="bd-search d-flex align-items-center">
+            <span class="algolia-autocomplete" style="position: relative; display: inline-block; direction: ltr;">
+                <input type="search" class="form-control ds-input" id="search-input" placeholder="Search..." autocomplete="off" data-siteurl="https://getbootstrap.com"
+                    data-docs-version="4.1" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false"
+                    aria-owns="algolia-autocomplete-listbox-0" dir="auto" style="position: relative; vertical-align: top;">
+                <pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: normal; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre>
+                <span class="ds-dropdown-menu" role="listbox" id="algolia-autocomplete-listbox-0" style="position: absolute; top: 100%; z-index: 100; left: 0px; right: auto; display: none;">
+                    <div class="ds-dataset-1"></div>
+                </span>
+            </span>
+            <button class="btn btn-link bd-search-docs-toggle d-md-none p-0 ml-3" type="button" data-toggle="collapse" data-target="#bd-docs-nav"
+                aria-controls="bd-docs-nav" aria-expanded="false" aria-label="Toggle docs navigation">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30" height="30" focusable="false">
+                    <title>Menu</title>
+                    <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 bd-content" role="main">
+        <div class="ceping_question1">
+            <h1 class="bd-title" id="content">Alerts</h1>
+            <table class="table">
+                <thead>
+                    <tr id="data-table-header">
+                        <th scope="col">#</th>
+                        <th scope="col">题目</th>
+                        <th scope="col">没有</th>
+                        <th scope="col">很少</th>
+                        <th scope="col">偶尔</th>
+                        <th scope="col">常常</th>
+                        <th scope="col">总是</th>
+                    </tr>
+                </thead>
+            </table>
+            <div id="container">
+
+            </div>
+            <p>
+                <a class="btn btn-lg btn-success" href="#" role="button" onclick="doit('xlsx')">Down excel</a>
+            </p>
+        </div>
+    </main>
+    </div>
+
+    <script type="text/javascript">
+        function doit(type, fn, dl) {
+            var elt = document.getElementById('data-table');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "Sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+                XLSX.writeFile(wb, fn || ('test.' + (type || 'xlsx')));
+        }
+        var aoa = [
+            ["1", "儿童特别爱玩旋转圆凳，玩公园中旋转地球或飞转设施，不觉晕"],
+            ["2", "儿童有正常智慧，但学习阅读难或做算术特难"],
+            ["3", "在看得见的情况下，屡碰撞桌椅、杯子或旁人；方向和距离感差"],
+            ["4", "双手或双脚配合不良，常忘另一边，如走路、跑步"]
+        ];
+        var ws = XLSX.utils.aoa_to_sheet(aoa);
+        var html_string = XLSX.utils.sheet_to_html(ws, { id: "data-table" });
+        document.getElementById("container").innerHTML = html_string;
+        $(function () {
+            $("#data-table").addClass("table table-striped");
+            $("#data-table tr").each(function (i) {
+                var n = i + 1;
+                var c = "<td t='s' id='sjs-C" + n + "'><input type='radio' value='1' name='q" + n + "' id='c" + n + "'></td>";
+                var d = "<td t='s' id='sjs-D" + n + "'><input type='radio' value='2' name='q" + n + "' id='d" + n + "'></td>";
+                var e = "<td t='s' id='sjs-E" + n + "'><input type='radio' value='3' name='q" + n + "' id='e" + n + "'></td>";
+                var f = "<td t='s' id='sjs-F" + n + "'><input type='radio' value='4' name='q" + n + "' id='f" + n + "'></td>";
+                var g = "<td t='s' id='sjs-G" + n + "'><input type='radio' value='5' name='q" + n + "' id='g" + n + "'></td>";
+                var h = "<td t='s' id='sjs-H" + n + "'></td>";
+                $(this).find("td:last").after(c + d + e + f + g+h);
+            });
+            $("#data-table tr:first").before($("#data-table-header"));
+            // $("#data-table input").click(function(){
+            //     $(this).parent().parent().find("td:last").text($(this).val());
+            // })
+        })
+    </script>
+</body>
+
+</html>
