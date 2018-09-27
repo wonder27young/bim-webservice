@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #coding:utf-8
-from flask import Flask,jsonify,make_response,request,json,render_template
+from flask import Flask,jsonify,make_response,request,json,render_template,session
 
 import io
 try:
@@ -10,26 +10,65 @@ except NameError:
 app = Flask(__name__)
 
 questions = []
+users = []
 with open('data.txt') as data_file:
     questions = json.load(data_file)
+
+
+
 def sync_data_to_file():
     with io.open('data.txt', 'w+', encoding='utf8') as outfile:
         str_ = json.dumps(questions,
                           indent=4, sort_keys=True,
                           separators=(',', ': '), ensure_ascii=False)
         outfile.write(to_unicode(str_))
-@app.route('/<string:page_name>/')
-def render_static(page_name):
-    return render_template('%s.html' % page_name)
+def sync_users_to_file():
+    with io.open('users.txt', 'w+', encoding='utf8') as outfile:
+        str_ = json.dumps(users,
+                          indent=4, sort_keys=True,
+                          separators=(',', ': '), ensure_ascii=False)
+        outfile.write(to_unicode(str_))
+# @app.route('/<string:page_name>/')
+# def render_static(page_name):
+#     return render_template('%s.html' % page_name)
 @app.route('/')
 def index():
-    return render_template("index.html")
-@app.route('/auth/login')
+    if not session.get('logged_in'):
+        return auth_login()
+    else:
+        return render_template("index.html")
+@app.route('/auth/login',methods=["GET", "POST"])
 def auth_login():
-    return render_template("auth/login.html")
+    if request.method == 'POST':
+        username = request.form['username']
+        phone = request.form['phone']
+        return get_question_list_view();
+        # if password == username + "_secret":
+        #     id = username.split('user')[1]
+        #     user = User(id)
+        #     login_user(user)
+        #     return redirect(request.args.get("next"))
+        # else:
+        #     return abort(401)
+    else:
+        return render_template("auth/login.html")
+# user api range start
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = filter(lambda t: t['id'] == user_id, users)
+    if len(user) == 0:
+        abort(404)
+    return jsonify({'user': user[0]})
+# @app.route('/api/users/<int:user_phone>/<username>', methods=['GET'])
+# def get_user(user_phone,username):
+#     user = filter(lambda t: t['phone'] == user_phone, users)
+#     if len(user) == 0:
+#         abort(404)
+#     return jsonify({'user': user[0]})
+
 @app.route('/question_list')
 def get_question_list_view():
-    return render_template("question_list")
+    return render_template("question_list.html")
 
 @app.route('/api/questions',methods=['GET'])
 def get_questions():

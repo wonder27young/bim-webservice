@@ -1,0 +1,9 @@
+[
+    {
+        "username": "test",
+        "id": 1,
+        "score": 100,
+        "phone": "13012345678"
+        "lastChangeTime":""
+    }
+]
